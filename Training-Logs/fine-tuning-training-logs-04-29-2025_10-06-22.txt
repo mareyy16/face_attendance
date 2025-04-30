@@ -1,0 +1,78 @@
+
+Training Start time:  10-06-22
+
+
+Initial
+----------
+Training Parameters:
+batch_size = 10
+epochs = 15
+workers = 0
+device = cpu
+
+----------
+Valid |     1/1    | loss:    1.0812 | fps:   12.3616 | acc:    0.0000   
+
+Epoch 1/15
+----------
+Train |     1/4    | loss:    1.4315 | fps:    4.9966 | acc:    0.2000   Train |     2/4    | loss:    0.9276 | fps:    5.3127 | acc:    0.5500   Train |     3/4    | loss:    0.6704 | fps:    5.3451 | acc:    0.6667   Train |     4/4    | loss:    1.2843 | fps:    4.5134 | acc:    0.6250   
+Valid |     1/1    | loss:    4.2306 | fps:   13.6567 | acc:    0.2500   
+
+Epoch 2/15
+----------
+Train |     1/4    | loss:    1.2908 | fps:    4.9958 | acc:    0.5000   Train |     2/4    | loss:    0.6478 | fps:    5.3461 | acc:    0.7500   Train |     3/4    | loss:    0.4713 | fps:    5.2615 | acc:    0.8333   Train |     4/4    | loss:    0.3535 | fps:    4.4867 | acc:    0.8750   
+Valid |     1/1    | loss:    2.9792 | fps:   17.4699 | acc:    0.5000   
+
+Epoch 3/15
+----------
+Train |     1/4    | loss:    0.0014 | fps:    6.5006 | acc:    1.0000   Train |     2/4    | loss:    0.0008 | fps:    6.0814 | acc:    1.0000   Train |     3/4    | loss:    0.0008 | fps:    6.4269 | acc:    1.0000   Train |     4/4    | loss:    1.1779 | fps:    5.3421 | acc:    0.8750   
+Valid |     1/1    | loss:    0.0001 | fps:   23.6758 | acc:    1.0000   
+
+Epoch 4/15
+----------
+Train |     1/4    | loss:    0.0177 | fps:    7.9448 | acc:    1.0000   Train |     2/4    | loss:    0.0210 | fps:    7.0603 | acc:    1.0000   Train |     3/4    | loss:    0.0325 | fps:    7.4162 | acc:    1.0000   Train |     4/4    | loss:    0.5429 | fps:    6.1481 | acc:    0.8750   
+Valid |     1/1    | loss:    3.0854 | fps:   23.1427 | acc:    0.7500   
+
+Epoch 5/15
+----------
+Train |     1/4    | loss:    0.0991 | fps:    4.6851 | acc:    0.9000   Train |     2/4    | loss:    0.1306 | fps:    4.5987 | acc:    0.8500   Train |     3/4    | loss:    0.6055 | fps:    4.7163 | acc:    0.7667   Train |     4/4    | loss:    1.9226 | fps:    3.9270 | acc:    0.5750   
+Valid |     1/1    | loss:   50.9073 | fps:   17.8804 | acc:    0.7500   
+
+Epoch 6/15
+----------
+Train |     1/4    | loss:    0.9048 | fps:    7.2728 | acc:    0.8000   Train |     2/4    | loss:    0.9370 | fps:    6.8164 | acc:    0.6500   Train |     3/4    | loss:    0.7383 | fps:    6.6448 | acc:    0.7000   Train |     4/4    | loss:    0.5540 | fps:    5.6295 | acc:    0.7750   
+Valid |     1/1    | loss:    4.5364 | fps:   24.1880 | acc:    0.7500   
+
+Epoch 7/15
+----------
+Train |     1/4    | loss:    0.6032 | fps:    8.2819 | acc:    0.9000   Train |     2/4    | loss:    0.3695 | fps:    8.1107 | acc:    0.9000   Train |     3/4    | loss:    0.3165 | fps:    7.7236 | acc:    0.9000   Train |     4/4    | loss:    0.8308 | fps:    6.2866 | acc:    0.8000   
+Valid |     1/1    | loss:    0.2294 | fps:   21.2482 | acc:    0.7500   
+
+Epoch 8/15
+----------
+Train |     1/4    | loss:    0.0662 | fps:    8.1350 | acc:    1.0000   Train |     2/4    | loss:    0.0889 | fps:    7.3856 | acc:    1.0000   Train |     3/4    | loss:    0.0926 | fps:    7.6194 | acc:    1.0000   Train |     4/4    | loss:    0.6025 | fps:    6.2449 | acc:    0.8750   
+Valid |     1/1    | loss:    0.0446 | fps:   13.2110 | acc:    1.0000   
+
+Epoch 9/15
+----------
+Train |     1/4    | loss:    0.0807 | fps:    6.3330 | acc:    1.0000   Train |     2/4    | loss:    0.0798 | fps:    7.0599 | acc:    1.0000   Train |     3/4    | loss:    0.1529 | fps:    7.6186 | acc:    0.9667   Train |     4/4    | loss:    0.1194 | fps:    6.2707 | acc:    0.9750   
+Valid |     1/1    | loss:    0.0557 | fps:   21.1410 | acc:    1.0000   
+
+Epoch 10/15
+----------
+Train |     1/4    | loss:    0.0477 | fps:    7.8741 | acc:    1.0000   Train |     2/4    | loss:    0.0755 | fps:    7.8602 | acc:    0.9500   Train |     3/4    | loss:    0.0848 | fps:    7.6864 | acc:    0.9667   Train |     4/4    | loss:    0.5895 | fps:    6.3161 | acc:    0.8500   
+Valid |     1/1    | loss:    0.0825 | fps:   16.7177 | acc:    1.0000   
+
+Epoch 11/15
+----------
+Train |     1/4    | loss:    0.1704 | fps:    7.4309 | acc:    0.9000   Train |     2/4    | loss:    0.1043 | fps:    7.7169 | acc:    0.9500   Train |     3/4    | loss:    0.0880 | fps:    7.6904 | acc:    0.9667   Train |     4/4    | loss:    0.5387 | fps:    6.2683 | acc:    0.8500   
+Valid |     1/1    | loss:    0.0499 | fps:    9.4745 | acc:    1.0000   
+
+Epoch 12/15
+----------
+Train |     1/4    | loss:    0.0266 | fps:    7.3614 | acc:    1.0000   Train |     2/4    | loss:    0.0606 | fps:    7.6275 | acc:    1.0000   Train |     3/4    | loss:    0.0694 | fps:    7.9543 | acc:    1.0000   Train |     4/4    | loss:    0.5065 | fps:    6.6231 | acc:    0.8750   
+Valid |     1/1    | loss:    0.0443 | fps:   21.6497 | acc:    1.0000   
+
+Epoch 13/15
+----------
+Train |     1/4    | loss:    0.1081 | fps:    7.8409 | acc:    1.0000   Train |     2/4    | loss:    0.1722 | fps:    7.9241 | acc:    0.9500   

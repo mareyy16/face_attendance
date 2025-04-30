@@ -1,103 +1,230 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardContent, Typography, Button, Box } from '@mui/material';
+import { Divider, Typography as AntTypography, Space } from 'antd';
+import  Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useRouter } from 'next/navigation';
+import { getRecordedLabels, addLabelToCookie, clearLabelsCookie } from '@/utils/attendanceCookies';
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+
+const { Text } = AntTypography;
+interface detections{
+  box0: number;
+  box1: number;
+  box2: number;
+  box3: number;
+  label: string;
+  confidence: number;
 }
+const LandingPage = () => {
+  // const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [lastLabel, setLastLabel] = useState<string>('');
+  const [lastLabelTime, setLastLabelTime] = useState<string>('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const router = useRouter();
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      clearLabelsCookie();
+    }, 60 * 60 * 1000); // 1 hour
+  
+    return () => clearInterval(intervalId);
+  }, []);
+  
+
+  useEffect(() => {
+    const initVideoStream = async () => {
+      try {
+        // Get user media (video stream)
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        setVideoStream(stream);
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (err) {
+        console.error('Error accessing media devices:', err);
+      }
+    };
+
+    // Initialize the video stream when the component mounts
+    initVideoStream();
+
+    return () => {
+      if (videoStream) {
+        videoStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+  const fetchAttendance = async(name:string) => {
+    try {
+      setSnackbarOpen(false);
+      const res = await fetch("/api/auto-attendance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", 
+        },
+        body: JSON.stringify({name}),
+      });
+      const data = await res.json();
+      const message = data.message+" for "+name || data.error || 'Unknown response';
+      setSnackbarMessage(message);
+      setSnackbarSeverity(data.message==='Time-in recorded'||data.message==='Time-out recorded' ? 'success' : 'error');
+      setSnackbarOpen(true);
+      // console.log('Attendance data: ',data)
+      return data.message || data.error || 'Unknown response';
+    } catch (err) {
+      console.error(err);
+      setSnackbarMessage('Encountered an error while fetching attendance');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    let animationFrameId: number;
+    // let isProcessing = false;
+  
+    const processFrame = async() => {
+      if (!videoRef.current || !canvasRef.current) {
+        animationFrameId = requestAnimationFrame(processFrame);
+        return;
+      }
+  
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+
+      if (video.readyState < 2) { // HAVE_CURRENT_DATA
+        animationFrameId = requestAnimationFrame(processFrame);
+        return;
+      }
+  
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+  
+      if (!ctx) {
+        animationFrameId = requestAnimationFrame(processFrame);
+        return;
+      }
+  
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataURL = canvas.toDataURL("image/jpeg", 0.7); // base64 string
+      
+  
+          try {
+            const res = await fetch("http://localhost:8000/inference", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json", 
+              },
+              body: JSON.stringify({image:dataURL}),
+            });
+  
+            const detections_data:detections[] = await res.json();
+            // console.log('Detections data: ',detections_data)
+            for (const box of detections_data) {
+              const label = box.label;
+              if (label && !getRecordedLabels().has(label)) {
+                const response = await fetchAttendance(label);
+                if (response === 'Time-in recorded' || response==='Time-out recorded') {
+                  addLabelToCookie(label);
+                  setLastLabel(label);
+                  setLastLabelTime(new Date().toLocaleTimeString());
+                }
+              }
+            }
+            
+          } catch (err) {
+            console.error(err);
+          }
+        animationFrameId = requestAnimationFrame(processFrame);
+    };
+  
+    animationFrameId = requestAnimationFrame(processFrame);
+  
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
+
+  return (
+    <>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="100vh"
+      bgcolor="#f5f5f5"
+    >
+      <Card sx={{ width: 600 }}>
+        <CardContent>
+          <Typography variant="h5" align="center" gutterBottom>
+            Attendance Camera
+          </Typography>
+          <div style={{ position: 'relative', width: '100%', height: 'auto' }}>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              style={{ width: '100%', borderRadius: '10px', transform: 'scaleX(-1)', top:0, left:0, zIndex:1 }}
+            />
+            <canvas
+              ref={canvasRef}
+              // width={640}
+              // height={480}
+              className="absolute top-0 left-0"
+              style={{ transform: 'scaleX(-1)',borderRadius: '10px', width: '100%', height: '100%', position:'absolute', top:0, left:0, zIndex: 2, pointerEvents: 'none' }}
+            />
+            {/* <canvas
+              ref={overlayCanvasRef} // for custom overlays / highlights / labels
+              style={{
+                width: '100%',
+                height: '100%',
+                transform: 'scaleX(-1)',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 5,
+                pointerEvents: 'none',
+                borderRadius: '10px'
+              }}
+            /> */}
+          </div>
+          <Space direction="vertical" style={{margin:'12px'}}>
+            {lastLabel!==''&&<Text>Name: {lastLabel}</Text>}
+            {lastLabelTime!==''&&<Text>Timed In: {lastLabelTime}</Text>}
+          </Space>
+          <Divider />
+          <Text italic style={{display:"flex", justifyContent:"center"}}>{"Don't have an account?"}</Text>
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => router.push('/register')}
+              
+            >
+              Register
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
+    <Snackbar anchorOrigin={{ vertical: 'top', horizontal:'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+            {snackbarMessage}
+        </Alert>
+    </Snackbar>
+    </>
+  );
+};
+
+export default LandingPage;
