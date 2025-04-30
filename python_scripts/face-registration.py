@@ -17,7 +17,8 @@ import random
 # pip install facenet-pytorch
 # pip3 install torch torchvision tensorboard opencv-python pandas pillow
 # python.exe -m pip install --upgrade pip
-# 
+# pip install fastapi uvicorn opencv-python
+
 TRAIN_LOG = "training.json"
 # Take in base64 string and return PIL image
 def stringToImage(base64_string):
