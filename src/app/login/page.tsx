@@ -2,6 +2,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import { useUserStore } from "@/stores/userStore";
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -10,8 +11,11 @@ import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import  Snackbar from '@mui/material/Snackbar';
 import { useRouter } from "next/navigation";
+import { Divider, Typography as AntTypography } from 'antd';
+const { Text, Link } = AntTypography;
 export default function RegisterStepper() {
     const [loading, setLoading] = React.useState<boolean>(false);
+    const setUser = useUserStore((state) => state.setUser);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState('');
     const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success');
@@ -33,8 +37,18 @@ export default function RegisterStepper() {
         });
         setSnackbarOpen(false);
         const data = await response.json()
-        console.log('Response:', data);
-        setSnackbarMessage(data.error || 'Unknown response');
+        // console.log('Response:', data);
+        setUser({
+            id:data.id,
+            name:data.name, 
+            email:data.email, 
+            role:data.role,
+            company_name: data.company_name,
+            designation: data.designation,
+            contact_number:data.contact_number,
+            age:data.age
+          })
+        setSnackbarMessage(data.message || data.error || 'Unknown response');
         setSnackbarSeverity(data.error ? 'error' : 'success');
         setSnackbarOpen(true);
         setLoading(false);
@@ -107,6 +121,11 @@ export default function RegisterStepper() {
                         Login
                     </Button>
                 </CardActions>
+                <Divider />
+                <Text italic style={{display:"flex", justifyContent:"center"}}>{"Don't have an account? "}<Link href="/register" color="primary">
+                    Register
+                </Link></Text>
+                
             </Card>
         </Box>
     </Box>

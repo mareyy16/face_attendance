@@ -15,6 +15,8 @@ import CameraCapture from '@/components/CameraCapture';
 import Alert from '@mui/material/Alert';
 import Autocomplete from '@mui/material/Autocomplete';
 import  Snackbar from '@mui/material/Snackbar';
+import { useUserStore } from "@/stores/userStore";
+import { useRouter } from "next/navigation";
 const steps = ['Basic Info', 'Company Details', 'Face Registration'];
 
 interface CompanyOptionType {
@@ -31,16 +33,24 @@ export default function RegisterStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [startScan, setStartScan] = React.useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const setUser = useUserStore((state) => state.setUser);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success');
-  
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success')
   const [formData, setFormData] = React.useState({
     name: '',
     email: '',
     password: '',
     company: '',
     designation: '',
+    age: '' as number | string,
+    contact_number: '' as number | string
   });
+  // const [imageData, setImageData] = React.useState<string>('');
+  let imageData:string;
+  const router = useRouter();
+  const setImageData = (data: string) => {
+    imageData = data;
+  }
   const handleSubmit = async() => {
     console.log('Submitting:', formData);
     // Send to backend here
@@ -49,7 +59,7 @@ export default function RegisterStepper() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({formData, imageData}),
     });
     setSnackbarOpen(false);
     const data = await response.json()
@@ -60,6 +70,17 @@ export default function RegisterStepper() {
       if(!response.ok){
         throw new Error("Error signing up");
       }
+      setUser({
+        id:data.id,
+        name:formData.name, 
+        email:formData.email, 
+        role:data.role,
+        company_name: formData.company,
+        designation: formData.designation,
+        contact_number:formData.contact_number,
+        age:formData.age
+      })
+      router.push("/dashboard");
   };
   const sendFrames = async (frames: { label: string; data: string }[]) => {
     try {
@@ -86,8 +107,10 @@ export default function RegisterStepper() {
     const [collectedFrames, setCollectedFrames] = React.useState<
     { label: string; data: string }[]
     >([]);
+    React.useEffect(() => {
+      console.log('formData:', formData);
+    }, [formData]);
     const maxFrames = 5;
-    
     const handleFrameCapture = (base64Image: string) => {
         if (collectedFrames.length < maxFrames) {
           setCollectedFrames((prev) => [
@@ -98,10 +121,12 @@ export default function RegisterStepper() {
       };
     React.useEffect(() => {
         if (collectedFrames.length === maxFrames) {
+            console.log('Collected frames:', collectedFrames[0].data);
+            setImageData(collectedFrames[0].data);
             sendFrames(collectedFrames);
         }
     }, [collectedFrames]);
-    
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -116,7 +141,7 @@ export default function RegisterStepper() {
 
   const isStepValid = () => {
     if (activeStep === 0) {
-      return formData.name && formData.email && formData.password;
+      return formData.name && formData.email && formData.password && formData.contact_number && formData.age;
     } else if (activeStep === 1) {
       return formData.company && formData.designation;
     }
@@ -170,6 +195,23 @@ export default function RegisterStepper() {
               name="password"
               type="password"
               value={formData.password}
+              onChange={handleChange}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Contact Number"
+              name="contact_number"
+              value={formData.contact_number}
+              onChange={handleChange}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Age"
+              name="age"
+              type="number"
+              value={formData.age}
               onChange={handleChange}
               margin="normal"
             />

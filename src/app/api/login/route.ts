@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import pool from "@/app/lib/Database/db";
 import bcrypt from "bcryptjs";
-import { RowDataPacket } from "mysql2";
-
+import { RowDataPacket, FieldPacket } from "mysql2";
+import { User } from "@/app/lib/Interface/interface";
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
@@ -26,7 +26,11 @@ export async function POST(req: Request) {
             "SELECT u.* FROM users u WHERE id = ?",
             [userId]
         );
-        return NextResponse.json({...userData[0]}, {status: 200});
+        await connection.query(
+          "UPDATE users SET last_login = NOW(), isActive = 1 WHERE email = ?", 
+          [email]
+        ) as [User[], FieldPacket[]];
+        return NextResponse.json({...userData[0], message:"User logged in successfully."}, {status: 200});
     } finally {
         if(connection) connection.release();
     }

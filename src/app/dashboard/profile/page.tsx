@@ -16,7 +16,7 @@ export default function UserDashboard() {
     const user = useUserStore((state)=>state.user)
     const fetchData = async (id:number) => {
         try {
-            const response = await fetch(`dashboard/api/profile/${id}`);
+            const response = await fetch(`api/profile/${id}`);
             if (!response.ok) throw new Error('Failed to fetch attendance data');
             const data = await response.json()
             console.log('Data: ', data);

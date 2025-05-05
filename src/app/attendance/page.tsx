@@ -5,7 +5,7 @@ import {Card, CardContent} from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 interface AttendanceData {
-  attendance_id: number;
+  id: number;
   name: string;
   company_name: string;
   designation: string;
@@ -49,7 +49,7 @@ const AttendancePage = () => {
 
         const json: AttendanceApiResponse = await response.json();
         const mapped: AttendanceData[] = json.data.map((row: RawAttendanceData) => ({
-          attendance_id: row.attendance_id,
+          id: row.attendance_id,
           name: row.name,
           company_name: row.company_name,
           designation: row.designation,
