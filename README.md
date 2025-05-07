@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+Here is a detailed ReadMe.md file content:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Face Attendance System**
+==========================
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Table of Contents**
+-----------------
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. [Introduction](#introduction)
+2. [Tech Stack](#tech-stack)
+	* [Frontend](#frontend)
+	* [Backend](#backend)
+	* [Database](#database)
+	* [Machine Learning](#machine-learning)
+3. [Project Structure](#project-structure)
+4. [Getting Started](#getting-started)
+5. [API Documentation](#api-documentation)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Introduction**
+---------------
 
-## Learn More
+Face Attendance System is a web-based application that utilizes facial recognition technology to mark attendance. The system consists of a frontend built with React and Next.js, a backend built with FastAPI and Python, and a database managed by MySQL. The facial recognition feature is powered by PyTorch.
 
-To learn more about Next.js, take a look at the following resources:
+**Tech Stack**
+--------------
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Frontend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* **React**: A JavaScript library for building user interfaces.
+* **Next.js**: A React-based framework for building server-rendered and statically generated websites.
+* **Material-UI**: A popular React UI framework for building responsive and customizable interfaces.
+* **Ant Design**: A popular React UI framework for building responsive and customizable interfaces.
+* **Zustand**: A state management library for React applications.
 
-## Deploy on Vercel
+### Backend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **Next.js**: A React-based framework for building server-rendered and statically generated websites. Uses port 3000.
+* **FastAPI**: A modern, fast (high-performance), web framework for building APIs with Python 3.7+. Uses port 8000.
+* **Python**: A high-level, interpreted programming language for building the backend logic.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Database
+
+* **MySQL**: A popular open-source relational database management system.
+
+### Machine Learning
+
+* **PyTorch**: An open-source machine learning library for building and training neural networks.
+
+**Project Structure**
+---------------------
+
+The project is structured into the following directories:
+
+* `face_attendance`: The root directory of the project.
+* `src`: The directory containing the frontend code.
+* `python_scripts`: The directory containing the backend code.
+* `app`: The directory containing the Next.js application code.
+* `components`: The directory containing reusable React components.
+* `lib`: The directory containing utility functions and libraries.
+* `stores`: The directory containing Zustand stores for state management.
+
+**Getting Started**
+-------------------
+
+To get started with the project, follow these steps:
+
+1. Clone the repository: `git clone https://github.com/your-username/face-attendance-system.git`
+2. Install the dependencies: `npm install`
+3. Setup the .env file and the MySQL database using the sql file `database_init.sql`
+4. Setup the python environment using
+    ```bash
+    python -m venv .venv
+    .venv/Scripts/activate
+    pip install facenet-pytorch
+    pip3 install torch torchvision tensorboard opencv-python pandas pillow
+    python.exe -m pip install --upgrade pip
+    pip install fastapi uvicorn opencv-python
+    ```
+5. Build the development server: `npm run build`
+6. Run the development server: `npm run dev-all`
+7. Open the application in your web browser: `http://localhost:3000`
