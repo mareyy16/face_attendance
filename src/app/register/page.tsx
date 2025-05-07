@@ -43,7 +43,7 @@ export default function RegisterStepper() {
     company: '',
     designation: '',
     age: '' as number | string,
-    contact_number: '' as number | string
+    contact_number: ''
   });
   // const [imageData, setImageData] = React.useState<string>('');
   let imageData:string;
@@ -61,6 +61,7 @@ export default function RegisterStepper() {
       },
       body: JSON.stringify({formData, imageData}),
     });
+
     setSnackbarOpen(false);
     const data = await response.json()
     console.log('Response:', data);

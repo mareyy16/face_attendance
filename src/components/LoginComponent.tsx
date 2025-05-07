@@ -13,76 +13,76 @@ import  Snackbar from '@mui/material/Snackbar';
 import { useRouter } from "next/navigation";
 import { Divider, Typography as AntTypography } from 'antd';
 const { Text, Link } = AntTypography;
-export default function LoginPage() {
+export default function LoginComponent() {
     const [loading, setLoading] = React.useState<boolean>(false);
-    const setUser = useUserStore((state) => state.setUser);
-    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-    const [snackbarMessage, setSnackbarMessage] = React.useState('');
-    const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success');
-    const router = useRouter();
-    const [formData, setFormData] = React.useState({
-        email: '',
-        password: '',
-    });
-    const handleSubmit = async() => {
-        setLoading(true);
-        console.log('Submitting:', formData);
-        // Send to backend here
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
+        const setUser = useUserStore((state) => state.setUser);
+        const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+        const [snackbarMessage, setSnackbarMessage] = React.useState('');
+        const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success');
+        const router = useRouter();
+        const [formData, setFormData] = React.useState({
+            email: '',
+            password: '',
         });
-        setSnackbarOpen(false);
-        const data = await response.json()
-        // console.log('Response:', data);
-        setUser({
-            id:data.id,
-            name:data.name, 
-            email:data.email, 
-            role:data.role,
-            company_name: data.company_name,
-            designation: data.designation,
-            profile_image: data.profile_image,
-            contact_number:data.contact_number,
-            age:data.age
-          })
-        setSnackbarMessage(data.message || data.error || 'Unknown response');
-        setSnackbarSeverity(data.error ? 'error' : 'success');
-        setSnackbarOpen(true);
-        setLoading(false);
-        if(!response.ok){
-            throw new Error("Error signing up");
-        }
-        router.push("/dashboard");
-    };
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    return (
-    <>
-    <Box sx={{ width: '100%' }}>
+        const handleSubmit = async() => {
+            setLoading(true);
+            console.log('Submitting:', formData);
+            // Send to backend here
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            setSnackbarOpen(false);
+            const data = await response.json()
+            // console.log('Response:', data);
+            setUser({
+                id:data.id,
+                name:data.name, 
+                email:data.email, 
+                role:data.role,
+                company_name: data.company_name,
+                designation: data.designation,
+                profile_image: data.profile_image,
+                contact_number:data.contact_number,
+                age:data.age
+              })
+            console.log('User Image: ', data.profile_image);
+            setSnackbarMessage(data.message || data.error || 'Unknown response');
+            setSnackbarSeverity(data.error ? 'error' : 'success');
+            setSnackbarOpen(true);
+            setLoading(false);
+            if(!response.ok){
+                throw new Error("Error signing up");
+            }
+            router.push("/dashboard");
+        };
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        };
+    
+    return(
+        <>
         <Box
             sx={{
-            width: '90%',
-            maxWidth: 600,
-            padding: '20px',
-            margin: 'auto',
+            // width: '90%',
+            // maxWidth: 600,
+            // padding: '20px',
+            // margin: 'auto',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
+            alignItems: 'flex-start',
+            // height: '100vh',
             }}
         >
             <Card
             sx={{
                 width: '100%',
                 p: 3,
-                borderRadius: 3,
-                boxShadow: 3,
+                // borderRadius: 3,
+                // boxShadow: 3,
                 display: 'flex',
                 flexDirection: 'column',
             }}
@@ -129,12 +129,11 @@ export default function LoginPage() {
                 
             </Card>
         </Box>
-    </Box>
-    <Snackbar anchorOrigin={{ vertical: 'top', horizontal:'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
-            {snackbarMessage}
-        </Alert>
-    </Snackbar>
+        <Snackbar anchorOrigin={{ vertical: 'top', horizontal:'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+            <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                {snackbarMessage}
+            </Alert>
+        </Snackbar>
     </>
-    );
+    )
 }

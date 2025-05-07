@@ -13,7 +13,7 @@ import { Typography, Layout, Menu, theme } from 'antd'
 import type { MenuProps } from 'antd';
 import { useUserStore } from "@/stores/userStore";
 import { usePageStore } from '@/stores/pageStore';
-import { CalendarOutlined ,FileTextOutlined ,LogoutOutlined, ScanOutlined, TeamOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
+import { CalendarOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import Image from 'next/image'
 import SearchBarMUI from '@/components/SearchBarMUI';
 import { usePathname, useRouter } from "next/navigation";
@@ -105,7 +105,12 @@ export default function RootLayout({
   }: Readonly<{
     children: React.ReactNode;
   }>) {
-  const [items, setItems]= React.useState<MenuItem[]>([])
+  const items = [
+        getItem('Profile', '/dashboard/profile', false, <UserOutlined />),
+        getItem('Employees', '/dashboard/employees', false, <TeamOutlined />),
+        getItem('Employee Attendance', '/dashboard/attendance', false, <CalendarOutlined />),
+        getItem('Logout', '/logout', false, <LogoutOutlined />),
+  ]
 //   const [rows, setRows] = React.useState<AttendanceData[]>([]);
   const user = useUserStore((state)=>state.user)
   const clearUser = useUserStore((state) => state.clearUser)
@@ -115,34 +120,6 @@ export default function RootLayout({
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  React.useEffect(() =>
-    {
-      // if(user)
-  
-      if (user)
-      {
-        setItems([
-            // getItem('Main Menu', 'sub1', false, null, 'group', [
-                getItem('Profile', '/dashboard/profile', false, <UserOutlined />),
-                getItem('Employees', '/dashboard/employees', false, <TeamOutlined />),
-                getItem('Register Face', '/dashboard/register-face', false, <ScanOutlined />),
-                getItem('Logs', '/dashboard/logs', false, <FileTextOutlined />),
-                getItem('Employee Attendance', '/dashboard/attendance', false, <CalendarOutlined />),
-            // ]),
-            // getItem('Settings', 'sub2', false, null, 'group', [
-                getItem('Settings', '/dashboard/settings', false, <SettingOutlined />),
-                getItem('Logout', '/logout', false, <LogoutOutlined />),
-            // ])
-          ])
-      } 
-    //   else if(user && user.role === 'employee') {
-    //     setItems([
-    //       getItem('Dashboard', '/dashboard', false, <PieChartOutlined />),
-    //     ])
-    //   }
-  
-    //   setLoading(false)
-    }, [user])
 
     const pathname = usePathname();
       React.useEffect(() => {
@@ -239,19 +216,19 @@ export default function RootLayout({
         <Menu theme="light" mode="inline" defaultSelectedKeys={['/profile']} items={items}
         selectedKeys={[pathname]}
         onSelect={async(e)=>{
-            if(e.key==='/logout'&&user){
+            if(e.key==='/logout'){
               console.log('Logging out...')
                 const res = await fetch('/api/logout', {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(user.id),
+                    body: JSON.stringify(user&&user.id),
                   });
             
                   const data = await res.json();
                   if (!res.ok) throw new Error(data.error);
                   clearUser();
                   clearPage();
-                  router.replace("/login"); // Redirect to login page
+                  router.replace("/"); // Redirect to login page
                   return
             } else {
               setPage({path:e.key})

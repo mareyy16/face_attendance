@@ -3,22 +3,23 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type User = {
-  id?: number;
   name: string;
-  email: string;
-  role: string;
   designation: string;
   company_name: string;
-  contact_number: number | string;
-  age: number | string;
+  contact_number: string;
+  email: string;
+  profile_image?: string;
+  age?: number | string;
+  id?: number;
+  role?: string;
   
 
-  loginData?: {
-    time_in: string;
-    time_in_image: string;
-    time_out: string;
-    time_out_image: string;
-  };
+  // loginData?: {
+  //   time_in: string;
+  //   time_in_image: string;
+  //   time_out: string;
+  //   time_out_image: string;
+  // };
 } | null;
 
 interface UserState {

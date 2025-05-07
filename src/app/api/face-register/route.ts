@@ -2,7 +2,12 @@ import { NextResponse } from 'next/server';
 import { spawn } from 'child_process';
 import path from 'path';
 import { Readable } from 'stream';
+import pool from "@/app/lib/Database/db";
+import { User } from '@/app/lib/Interface/interface';
+// import bcrypt from "bcryptjs";
 
+// import { User } from "@/app/lib/Interface/interface";
+import { FieldPacket, ResultSetHeader } from "mysql2";
 let pythonProcess: ReturnType<typeof spawn> | null = null;
 
 // Type definition for each frame
@@ -87,12 +92,59 @@ async function runPythonScript() {
       // Perform any cleanup or further processing
     });
   }
+  async function insertUser(name:string, imageData:string){
+    const connection = await pool.getConnection();
+    try{
+      const existingUser: [User[], FieldPacket[]] = await connection.query("SELECT id FROM users WHERE name = ?", [name]) as [User[], FieldPacket[]];
+            console.log('Existing user: ', existingUser[0]);
+            if (existingUser[0].length > 0) {
+              console.log("User already exists, will just update the face data...")
+              const updateQuery = `
+        UPDATE users
+        SET 
+          profile_image = ?
+        WHERE name = ?
+      `
+      const updateValues = [
+        imageData,
+        name
+      ];
+      // const values=[name, email, hashedPassword, company, designation, new Date(), imageData, role, age, contact_number];
+
+      await connection.query(
+        updateQuery,
+        updateValues
+      ) as [User[], FieldPacket[]];
+            } else {
+              console.log("User does not exist, will create a new user...")
+              // ✅ Insert new user
+              console.log('Will insert user ');
+              const query = `
+              INSERT INTO users (name, registered_at, profile_image) VALUES (?, ?, ?)
+              `;
+              const values=[name, new Date(), imageData];
+
+              const [result] = await connection.query(
+                query,
+                values
+              ) as [ResultSetHeader, FieldPacket[]];
+              console.log('Inserted user ');
+              const userId = result.insertId;
+              console.log('User ID: ', userId);
+            }
+    }catch(error){
+      console.error('Database query error:', error);
+    }finally{
+      if(connection) connection.release();
+    }
+  }
   export async function POST(req: Request) {
     try {
       const body = await req.json();
       const { frames } = body;
       const result = await processFrames(frames);
-
+      await insertUser(frames[0].label, frames[0].data);
+      
       await runPythonScript();
       return NextResponse.json({
         message: result,

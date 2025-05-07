@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, Typography, Button, Box } from '@mui/material';
-import { Divider, Typography as AntTypography, Space } from 'antd';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import { Typography as AntTypography, Layout, Space } from 'antd';
 import  Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import { useRouter } from 'next/navigation';
 import { getRecordedLabels, addLabelToCookie, clearLabelsCookie } from '@/utils/attendanceCookies';
+import LoginComponent from '@/components/LoginComponent';
+import HeaderNav from '@/components/HeaderNav';
 
 
 const { Text } = AntTypography;
@@ -19,7 +20,6 @@ interface detections{
   confidence: number;
 }
 const LandingPage = () => {
-  // const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -28,7 +28,6 @@ const LandingPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-  const router = useRouter();
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -91,7 +90,6 @@ const LandingPage = () => {
 
   useEffect(() => {
     let animationFrameId: number;
-    // let isProcessing = false;
   
     const processFrame = async() => {
       if (!videoRef.current || !canvasRef.current) {
@@ -157,14 +155,28 @@ const LandingPage = () => {
 
   return (
     <>
+    <Layout
+    style={{ minHeight: '100vh' }}>
+    <HeaderNav/>
     <Box
       display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="100vh"
+      justifyContent="space-evenly"
+      alignItems="flex-start"
+      // height="100vh"
       bgcolor="#f5f5f5"
+      gap={'32px'}
+      padding={'32px'}
     >
-      <Card sx={{ width: 600 }}>
+      <Card 
+      sx={{ 
+        width: '80%', 
+        maxWidth: 900,
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+       }}
+      >
         <CardContent>
           <Typography variant="h5" align="center" gutterBottom>
             Attendance Camera
@@ -179,50 +191,25 @@ const LandingPage = () => {
             />
             <canvas
               ref={canvasRef}
-              // width={640}
-              // height={480}
               className="absolute top-0 left-0"
               style={{ transform: 'scaleX(-1)',borderRadius: '10px', width: '100%', height: '100%', position:'absolute', top:0, left:0, zIndex: 2, pointerEvents: 'none' }}
             />
-            {/* <canvas
-              ref={overlayCanvasRef} // for custom overlays / highlights / labels
-              style={{
-                width: '100%',
-                height: '100%',
-                transform: 'scaleX(-1)',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                zIndex: 5,
-                pointerEvents: 'none',
-                borderRadius: '10px'
-              }}
-            /> */}
           </div>
           <Space direction="vertical" style={{margin:'12px'}}>
             {lastLabel!==''&&<Text>Name: {lastLabel}</Text>}
             {lastLabelTime!==''&&<Text>Timed In: {lastLabelTime}</Text>}
           </Space>
-          <Divider />
-          <Text italic style={{display:"flex", justifyContent:"center"}}>{"Don't have an account?"}</Text>
-          <Box display="flex" justifyContent="center" mt={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => router.push('/register')}
-              
-            >
-              Register
-            </Button>
-          </Box>
         </CardContent>
       </Card>
+      <LoginComponent/>
+      
     </Box>
     <Snackbar anchorOrigin={{ vertical: 'top', horizontal:'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
         <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
             {snackbarMessage}
         </Alert>
     </Snackbar>
+    </Layout>
     </>
   );
 };
